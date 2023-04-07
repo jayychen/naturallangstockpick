@@ -1,0 +1,70 @@
+{
+  //file list------------------------------
+  "files.watcherExclude": {
+    //R 
+    "**/man/": true,
+    "**/RcppExports.*": true,
+    "**/.Rhistory": true,
+    "**/.Rbuildignore": true,
+    "**/.Rproj.user": true,
+    //python
+    "**/__pycache__": true,
+    //git
+    "**/.git": true,
+    //c++
+    "**/build": true,
+    //mac
+    "**.DS_Store": true,
+    //project
+    "**/temp": true
+  },
+  "files.exclude": {
+    //R 
+    "**/man/": true,
+    "**/RcppExports.*": true,
+    "**/.Rhistory": true,
+    "**/.Rbuildignore": true,
+    "**/.Rproj.user": true,
+    //python
+    "**/__pycache__": true,
+    //git
+    "**/.git": true,
+    //c++
+    "**/build": true,
+    //mac
+    "**.DS_Store": true,
+    //project
+    "**/temp": true
+  },
+  // formatter------------------------------
+  "editor.formatOnSave": true,
+  "clang-format.language.cpp.style": "${workspaceFolder}/.vscode/.clang-format",
+  "python.formatting.autopep8Args": [
+    "--ignore",
+    "E402"
+  ],
+  // cmake ------------------------------
+  "cmake.sourceDirectory": "${workspaceFolder}/cpp",
+  "cmake.buildDirectory": "${workspaceFolder}/build/${buildType}",
+  "cmake.configureOnOpen": false,
+  "cmake.configureOnEdit": false,
+  // cpp ------------------------------
+  "C_Cpp.autoAddFileAssociations": false,
+  // r------------------------------
+  "r.bracketedPaste": true,
+  "r.rterm.linux": "/home/ychen/.local/bin/radian",
+  "r.rpath.linux": "/usr/bin/R",
+  "r.lsp.debug": false,
+  "r.lsp.diagnostics": false, //for linting
+  "r.alwaysUseActiveTerminal": false,
+  "r.sessionWatcher": true,
+  "r.rterm.option": [
+    "--no-save",
+    "--no-restore"
+  ],
+  // python-----------------------------
+  "python.pythonPath": "/usr/bin/python3.8",
+  "python.analysis.extraPaths": [
+    "./python"
+  ],
+}
