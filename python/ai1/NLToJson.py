@@ -35,15 +35,15 @@ summary_function: (optional, default mean)
 ---
 Examples:
 Q: which stocks closed above 20 days high on Apr 6, 2023?
-A: {"Date":"2023-04-06", "expr": "c(t=day,n=0)>h(t=day,n=20,s=max)"}
+A: {"Date":"2023-04-06", "Expr": "c(t=day,n=0)>h(t=day,n=20,s=max)"}
 Q: which stocks has market cap above 1 trillion on 2023-01-02?
-A: {"Date":"2023-01-02", "expr": "marketcap(t=daily)>1e6"}
+A: {"Date":"2023-01-02", "Expr": "marketcap(t=daily)>1e6"}
 Q: which larget cap stocks has low below 20 days low today?
-A: {"Date":"today", "expr": "marketcap(t=daily)>8200&l(t=day)<l(t=day,n=20,s=min)"}
+A: {"Date":"today", "Expr": "marketcap(t=daily)>8200&l(t=day)<l(t=day,n=20,s=min)"}
 Q: small market cap stocks that close above 5 day mean today?
-A: {"Date":"today", "expr": "marketcap(t=daily)<8200&marketcap(t=daily)>100&c(t=day)>c(t=day,n=5,s=mean)"}
+A: {"Date":"today", "Expr": "marketcap(t=daily)<8200&marketcap(t=daily)>100&c(t=day)>c(t=day,n=5,s=mean)"}
 Q: micro market cap stocks that have unusual high volume on 23/02/01?
-A: {"Date":"2023-02-01", "expr": "marketcap(t=daily)<100&qlmt(t=day)>qlmt(t=day,n=5,s=max)*2"}
+A: {"Date":"2023-02-01", "Expr": "marketcap(t=daily)<100&qlmt(t=day)>qlmt(t=day,n=5,s=max)*2"}
 """
 
 
