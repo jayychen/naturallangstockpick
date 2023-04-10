@@ -17,6 +17,8 @@ external_libs/
 **.h5
 **.swp
 **.bak
-**.html
 **.tar.gz
 temp/
+#node
+**/node_modules
+**/package-lock.json

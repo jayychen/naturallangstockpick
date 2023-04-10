@@ -1,16 +1,17 @@
 import json
 import subprocess
 import zmq
-import os
 from ai1.NLToJson import NLToJson
 
 #
-BinDir = os.getenv("NlspBinDir")
 QCache = {}  # Initialize cache for queries
 
 
 def stockdbsymfilter(date: str, expr: str) -> list:
-    process = subprocess.run([BinDir + '/stockdbsymfilter', date, expr],
+    """
+    make sure folder containing stockdbsymfilter is in PATH
+    """
+    process = subprocess.run(['stockdbsymfilter', date, expr],
                              stdout=subprocess.PIPE, text=True)
     symbols = process.stdout.split('\n')
     return symbols[:-1]  # Remove the last empty element
