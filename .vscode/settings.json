@@ -50,18 +50,6 @@
   "cmake.configureOnEdit": false,
   // cpp ------------------------------
   "C_Cpp.autoAddFileAssociations": false,
-  // r------------------------------
-  "r.bracketedPaste": true,
-  "r.rterm.linux": "/home/ychen/.local/bin/radian",
-  "r.rpath.linux": "/usr/bin/R",
-  "r.lsp.debug": false,
-  "r.lsp.diagnostics": false, //for linting
-  "r.alwaysUseActiveTerminal": false,
-  "r.sessionWatcher": true,
-  "r.rterm.option": [
-    "--no-save",
-    "--no-restore"
-  ],
   // python-----------------------------
   "python.pythonPath": "/usr/bin/python3.8",
   "python.analysis.extraPaths": [
