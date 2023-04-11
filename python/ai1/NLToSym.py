@@ -4,6 +4,13 @@ import zmq
 from ai1.NLToJson import NLToJson
 
 #
+PreQCache = {
+    "volume increase 10 folds today vs previous 5 days":
+    '{"Date":"today", "Expr": "qlmt(t=day)/qlmt(t=day,n=5,s=mean)>10"}',
+    "random question":
+    "I'm sorry, I didn't understand your question. Please provide a valid question related to the format of the JSON output."
+}
+ExploreID = 0
 QCache = {}  # Initialize cache for queries
 
 
@@ -20,6 +27,16 @@ def stockdbsymfilter(date: str, expr: str) -> list:
 
     symbols = process.stdout.split('\n')
     return symbols[:-1]  # Remove the last empty element
+
+
+def stockdblastdate() -> str:
+    """
+    get the last date in the database
+    """
+    process = subprocess.run(['stockdblastdate'],
+                             stdout=subprocess.PIPE, text=True)
+    dat = process.stdout.split('\n')
+    return dat[0]
 
 
 def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
@@ -48,10 +65,20 @@ def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
 
     while True:
         q = socket.recv_string()
+        info = ""
+        if q == 'explore':
+            global ExploreID
+            q = list(PreQCache.keys())[ExploreID]
+            ExploreID = (ExploreID + 1) % len(PreQCache)
+            info += f"Exploring: {q}\n"
+        else:
+            info += f"Checking: {q}\n"
         skt_log.send_json({'q': q})
 
         # Check if q exists in cache, otherwise convert q to JSON
-        if q in QCache:
+        if q in PreQCache:
+            js_str = PreQCache[q]
+        elif q in QCache:
             js_str = QCache[q]
         else:
             try:
@@ -67,10 +94,17 @@ def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
         try:
             js = json.loads(js_str)
             date = js.get('Date')
+            if date == "today":
+                date = stockdblastdate()
+                info += f"Last available data on: {date}\n"
             expr = js.get('Expr')
         except Exception as e:
-            socket.send_json({"error": "gpt", "msg": js_str})
-            skt_log.send_json({"error": "gpt", "msg": js_str})
+            resp = {"result": "error",
+                    "err_msg": f"OpenAI: {js_str}"}
+            skt_log.send_json(resp)
+            if info != "":
+                resp['info'] = info
+            socket.send_json(resp)
             continue
         else:
             skt_log.send_string(js_str)
@@ -79,15 +113,20 @@ def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
         try:
             symbols = stockdbsymfilter(date, expr)
         except Exception as e:
-            socket.send_json({"error": "db_query", "msg": {
-                "Date": date, "Expr": expr}})
-            skt_log.send_json({"error": "db_query", "msg": {
-                "Date": date, "Expr": expr}})
+            resp = {"result": "error",
+                    "err_msg": f"DB Query failed for Date: {date}, Expr: {expr}"}
+            skt_log.send_json(resp)
+            if info != "":
+                resp['info'] = info
+            socket.send_json(resp)
             continue
 
-        response = {'results': 'ok', 'symbols': symbols}
-        socket.send_json(response)
-        skt_log.send_json(response)
+        # success
+        resp = {'result': 'ok', 'symbols': symbols}
+        if info != "":
+            resp['info'] = info
+        socket.send_json(resp)
+        skt_log.send_json(resp)
 
 
 if __name__ == '__main__':
