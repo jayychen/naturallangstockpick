@@ -1,8 +1,10 @@
 const socket = io();
 const questionInput = document.getElementById('questionInput');
 const submitQuestion = document.getElementById('submitQuestion');
+const exploreButton = document.getElementById('explore');
 const responseTable = document.getElementById('responseTable');
 const errorContainer = document.getElementById('errorContainer');
+const infoContainer = document.getElementById('infoContainer');
 
 submitQuestion.addEventListener('click', () => {
   const question = questionInput.value;
@@ -19,13 +21,21 @@ questionInput.addEventListener('keypress', (event) => {
   }
 });
 
+exploreButton.addEventListener('click', () => {
+  socket.emit('submitQuestion', { question: 'explore' });
+});
+
 
 socket.on('response', (response) => {
+  infoContainer.innerHTML = '';
   errorContainer.innerHTML = '';
   responseTable.innerHTML = '';
+  if (response.info) {
+    infoContainer.innerHTML = `<div class="alert alert-secondary">` + response.info + `</div>`;
+  }
 
-  if (response.error) {
-    errorContainer.innerHTML = `<div class="alert alert-danger">${JSON.stringify(response)}</div>`;
+  if (response.result === 'error') {
+    errorContainer.innerHTML = `<div class="alert alert-danger">` + response.err_msg + `</div>`;
   } else {
     const tableBody = document.createElement('tbody');
     response.symbols.forEach((item, index) => {

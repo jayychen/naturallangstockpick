@@ -61,6 +61,14 @@ body {
   width: 100%;
 }
 
+#errorContainer {
+  white-space: pre-line;
+}
+
+#infoContainer {
+  white-space: pre-line;
+}
+
 /* #responseTable {
   width: 100%;
   border-collapse: collapse;
