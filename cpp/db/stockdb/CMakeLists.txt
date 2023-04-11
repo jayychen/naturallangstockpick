@@ -17,6 +17,9 @@ if(DEFINED BUILDEXE)
   # stockdbsymfilter
   add_executable(stockdbsymfilter stockdbsymfilter.cpp)
   target_link_libraries(stockdbsymfilter stockdb json)
+  # stockdblastdate
+  add_executable(stockdblastdate stockdblastdate.cpp)
+  target_link_libraries(stockdblastdate stockdb json)
 endif()
 
 if(DEFINED BUILDUNITTEST)

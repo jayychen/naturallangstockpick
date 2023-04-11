@@ -76,6 +76,10 @@ public:
    */
   const std::vector<std::string> &GetStrVec(std::string expr, std::string dat,
                                             std::string sym) const;
+  /**
+   * @brief last available date in database
+   */
+  std::string LastDate() const;
 
 public:
   StockDB() = default; // do nothing
