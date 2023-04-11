@@ -47,7 +47,7 @@ A: {"Date":"2023-02-01", "Expr": "marketcap(t=daily)<100&qlmt(t=day)>qlmt(t=day,
 """
 
 
-def NLToJson(q):
+def NLToJson(q) -> str:
     content = f"{MsgHead}\n---\nQ:{q}\nA:\n"
     res = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",

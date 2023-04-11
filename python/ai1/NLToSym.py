@@ -13,11 +13,16 @@ def stockdbsymfilter(date: str, expr: str) -> list:
     """
     process = subprocess.run(['stockdbsymfilter', date, expr],
                              stdout=subprocess.PIPE, text=True)
+    # Check if the command executed successfully
+    if process.returncode != 0:
+        raise RuntimeError(
+            f"stockdbsymfilter command failed with return code {process.returncode}")
+
     symbols = process.stdout.split('\n')
     return symbols[:-1]  # Remove the last empty element
 
 
-def NLToSymWorker(addr_rep, multi_worker=False):
+def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
     """
     a function that creates a ZeroMQ REP socket, listens for incoming messages, and performs the following operations:
         1. Receives a message in the format {"q": "some q"} from the socket
@@ -36,41 +41,50 @@ def NLToSymWorker(addr_rep, multi_worker=False):
         socket.connect(addr_rep)
     else:
         socket.bind(addr_rep)
+    # logger init
+    ctx_log = zmq.Context()
+    skt_log = ctx_log.socket(zmq.PUB)
+    skt_log.connect(addr_log)
 
     while True:
         q = socket.recv_string()
+        skt_log.send_json({'q': q})
 
         # Check if q exists in cache, otherwise convert q to JSON
         if q in QCache:
             js_str = QCache[q]
-            js = json.loads(js_str)
         else:
-            try:
-                js_str = NLToJson(q)
-                js = json.loads(js_str)
-                # Cache the JSON string only if parsable
-                QCache[q] = js_str
-            except Exception as e:
-                socket.send_json({"error": "q_parse", "msg": js_str})
-                continue
+            js_str = NLToJson(q)
+            QCache[q] = js_str
 
-        # Check if JSON has keys 'Date' and 'Expr'
-        if 'Date' not in js or 'Expr' not in js:
-            socket.send_json({"error": "q_parse", "msg": js_str})
+        # Convert gpt output to JSON
+        try:
+            js = json.loads(js_str)
+            date = js.get('Date')
+            expr = js.get('Expr')
+        except Exception as e:
+            # print error message
+            print("Error: " + str(e))
+            socket.send_json({"error": "gpt", "msg": js_str})
+            skt_log.send_json({"error": "gpt", "msg": js_str})
             continue
-        date = js.get('Date')
-        expr = js.get('Expr')
+        else:
+            skt_log.send_string(js_str)
 
         # Convert JSON to symbols
         try:
             symbols = stockdbsymfilter(date, expr)
         except Exception as e:
-            socket.send_json({"error": "db_query", "Date": date, "Expr": expr})
+            socket.send_json({"error": "db_query", "msg": {
+                "Date": date, "Expr": expr}})
+            skt_log.send_json({"error": "db_query", "msg": {
+                "Date": date, "Expr": expr}})
             continue
 
-        response = {'symbols': symbols}
+        response = {'results': 'ok', 'symbols': symbols}
         socket.send_json(response)
+        skt_log.send_json(response)
 
 
 if __name__ == '__main__':
-    NLToSymWorker("ipc:///tmp/nl2sym.ipc")
+    NLToSymWorker("ipc:///tmp/nl2sym.ipc", "ipc:///tmp/nl2sym_log.ipc")
