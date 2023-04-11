@@ -1,4 +1,5 @@
 const express = require('express');
+const favicon = require('serve-favicon')
 const { Server } = require('socket.io');
 const zmq = require('zeromq');
 const http = require('http');
@@ -8,6 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.static('public'));
+app.use(favicon('public/nlsp-logo.png'))
 
 var zmq_req = zmq.socket('req');
 zmq_req.connect('ipc:///tmp/nl2sym_service.ipc');
