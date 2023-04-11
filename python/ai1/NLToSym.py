@@ -54,7 +54,13 @@ def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
         if q in QCache:
             js_str = QCache[q]
         else:
-            js_str = NLToJson(q)
+            try:
+                js_str = NLToJson(q)
+            except Exception as e:
+                msg = {"error": "gpt", "msg": "can't connect to openai api"}
+                socket.send_json(msg)
+                skt_log.send_json(msg)
+                continue
             QCache[q] = js_str
 
         # Convert gpt output to JSON
@@ -63,8 +69,6 @@ def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
             date = js.get('Date')
             expr = js.get('Expr')
         except Exception as e:
-            # print error message
-            print("Error: " + str(e))
             socket.send_json({"error": "gpt", "msg": js_str})
             skt_log.send_json({"error": "gpt", "msg": js_str})
             continue
