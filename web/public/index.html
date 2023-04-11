@@ -10,14 +10,40 @@
 </head>
 
 <body>
-  <div class="container">
-    <h1 class="text-center mt-5">Natural Language Stock Picking</h1>
-    <div class="input-group mt-4">
-      <input type="text" class="form-control" id="questionInput" placeholder="Enter your question">
-      <button class="btn btn-primary" id="submitQuestion">Submit</button>
+  <div class="page-container">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <div class="logo-container">
+            <img src="nlsp.png" alt="Logo" id="logo" title="Natural Language Stock Picking">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-lg-8">
+          <div class="input-group mt-4">
+            <input type="text" class="form-control" id="questionInput"
+              placeholder="Describe stock filtering criteria. Click 'Explore' for ideas.">
+            <div class="col-4 col-lg-4">
+              <div class="button-container">
+                <button class="btn search-btn" id="submitQuestion">Search</button>
+                <button class="btn explore-btn" id="explore">Explore</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-lg-4">
+          <div id="errorContainer" class="mt-4"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-lg-4">
+          <table id="responseTable" class="table table-striped mt-4"></table>
+        </div>
+      </div>
     </div>
-    <div id="errorContainer" class="mt-4"></div>
-    <table id="responseTable" class="table table-striped mt-4"></table>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.4.1/dist/socket.io.min.js"></script>
   <script src="main.js"></script>

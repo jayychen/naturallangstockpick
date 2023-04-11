@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
   socket.on('submitQuestion', (data) => {
     forwardRequestToZeroMQ(data)
       .then((response) => {
-        console.log("response", JSON.stringify(response));
+        console.log(JSON.stringify(response));
         socket.emit('response', response);
       })
       .catch((error) => {
