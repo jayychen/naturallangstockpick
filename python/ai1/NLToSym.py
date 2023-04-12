@@ -79,7 +79,8 @@ def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
             try:
                 js_str = NLToJson(q)
             except Exception as e:
-                msg = {"error": "gpt", "msg": "can't connect to openai api"}
+                msg = {"result": "error",
+                       "err_msg": "can't connect to openai api, try again in a few seconds"}
                 socket.send_json(msg)
                 skt_log.send_json(msg)
                 continue
