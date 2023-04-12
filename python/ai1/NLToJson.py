@@ -9,41 +9,83 @@ logging.basicConfig(filename=log_fname, filemode='a',
                     level=logging.INFO, format='%(asctime)s: %(message)s')
 
 Role = """
-You are a natural language to json translator
+You are a very cautious natural language to json translator
 """
 
+# Be extremely cautious. DO NOT use unspecificed tables and columns. Return short error stating requested table/column not in database.
 MsgHead = """
-Return json in following format: {"Date":"xxx", "Expr": "xxx"}
+Return json in following format: {"Date":"xxx", "Expr": "xxx"}. 
 Date is either in YYYY-MM-DD format, or today.
-Expr is an expression composed of tokens and common mathmatical operations of tokens are supported. eg. log10({token1}/{token2})+exp((token3))
+Expr is an expression composed of tokens and common math operations of tokens are supported. eg. log10({token1}/{token2})+exp((token3))
 Token has following format: {column_name}(n={day},t={table_name},s={summary_function}), where 
-table_name, column_name: position in the database
-  eg. daily, marketcap: market cap (in million)
-  eg. day, c: daily close price
-  eg. day, h: daily high 
-  eg. day, l: daily low 
-  eg. day, vw: daily vwap 
-  eg. day, qlmt: daily volume
-day: day shift (optional, default 0)
-    0 for current day;
-    positive num for history;
-    positive num start with 0 for history including today;
-    negative num for future;
-    negative num start with 0 for future including today;
-summary_function: (optional, default mean)
+table_name/column_name list as following (this are the only tables/columns supported now, anything can't be matched exactly should generate a short error stating requested table/column not in database):
+    - daily/marketcap: market cap (in million)
+    - day/c: daily close price
+    - day/h: daily high 
+    - day/l: daily low 
+    - day/vw: daily vwap 
+    - day/qlmt: daily volume
+day: day shift
+    - 0 for current day;
+    - positive num for history;
+    - positive num start with 0 for history including today;
+summary_function:
     only used when n!=0, for summarizing vector of data into a single number. 
+    supported functions: mean, sd, max, min, mid, ema, mdd
+---
+Notes:
+marketcap(t=daily)>8200: large cap
+marketcap(t=daily)<8200&marketcap(t=daily)>100: mid cap
+marketcap(t=daily)<100: small cap
+c(t=day,n=9,s=ema): yesterday 9 day ema
+c(t=day,n=09,s=ema): today 9 day ema
+c(t=day,n=020,s=mdd): 20 day close price max drawdown, negative number between -1 and 0
 ---
 Examples:
-Q: which stocks closed above 20 days high on Apr 6, 2023?
-A: {"Date":"2023-04-06", "Expr": "c(t=day,n=0)>h(t=day,n=20,s=max)"}
-Q: which stocks has market cap above 1 trillion on 2023-01-02?
-A: {"Date":"2023-01-02", "Expr": "marketcap(t=daily)>1e6"}
+Q: stocks making 20 day new high
+A: {"Date":"today", "Expr": "h(t=day,n=0)>h(t=day,n=20,s=max)"}
+Q: which display unusual high volume on Apr 5, 2023?
+A: {"Date":"2023-04-05", "Expr": "qlmt(t=day,n=0)>qlmt(t=day,n=20,s=mean)*10"}
+Q: big cap stock making 5 day new high on 23/04/03
+A: {"Date":"2023-04-03", "Expr": "marketcap(t=daily)>8200&h(t=day,n=0)>h(t=day,n=5,s=max)"}
+Q: which small cap stock has 9 day sma cross above 20 day sma today?
+A: {"Date":"today", "Expr": "marketcap(t=daily)<100&c(t=day,n=9,s=mean)<c(t=day,n=20,s=mean)&c(t=day,n=09,s=mean)>c(t=day,n=020,s=mean)"}
+Q: only meme stocks
+A: database not has data for meme stocks yet
+Q: how are things going?
+A: not a relevant question
+"""
+
+# testing results, may not match prompt
+OOSExamples = """
+Q: which large cap has high low range twice larger than 10 day average?
+A: {"Date":"today", "Expr": "marketcap(t=daily)>8200&h(t=day,n=0)-l(t=day,n=0)>2*(h(t=day,n=10,s=mean)-l(t=day,n=10,s=mean))"}
+Q: which mid cap stocks gain more than 5% on Apr 3, 2023?
+A: {"Date":"2023-04-03", "Expr": "marketcap(t=daily)>100&marketcap(t=daily)<8200&c(t=day,n=0)/c(t=day,n=1)-1>0.05"}
+Q: small cap with 5 fold increase in volume vs 20 day average
+A: {"Date":"today", "Expr": "marketcap(t=daily)<100&qlmt(t=day,n=0)/qlmt(t=day,n=20)>5"}
+Q: list small cap meme stocks
+A: Sorry, I cannot provide an answer to that question as the database does not have data for meme stocks yet.
+Q: I maintain the database and has added column idx under table meme, where 1 is for meme stocks. list small cap meme stocks
+A: {"Date":"today", "Expr": "marketcap(t=daily)<100&idx(t=meme,n=0)=1"}
+Q: big cap with large percent of trading from institutions
+A: I'm sorry, I cannot provide an answer as the requested table/column "institutional trading" is not in the database and not supported by the translator.
+Q: big cap with close price max drawdown more than 10% in last 20 days
+A: {"Date":"today", "Expr": "marketcap(t=daily)>8200&c(t=day,n=020,s=mdd)<-0.1"}
 Q: which larget cap stocks has low below 20 days low today?
 A: {"Date":"today", "Expr": "marketcap(t=daily)>8200&l(t=day)<l(t=day,n=20,s=min)"}
-Q: small market cap stocks that close above 5 day mean today?
-A: {"Date":"today", "Expr": "marketcap(t=daily)<8200&marketcap(t=daily)>100&c(t=day)>c(t=day,n=5,s=mean)"}
-Q: micro market cap stocks that have unusual high volume on 23/02/01?
-A: {"Date":"2023-02-01", "Expr": "marketcap(t=daily)<100&qlmt(t=day)>qlmt(t=day,n=5,s=max)*2"}
+Q: how are things going?
+A: Sorry, that is not a relevant question. Please provide a valid query in the format specified.
+"""
+
+# testing fail
+"""
+Q: mid cap, 9 day ema cross below 26 day today
+A: {"Date":"today", "Expr": "marketcap(t=daily)>100&marketcap(t=daily)<8200&c(t=day,n=9,s=ema)>c(t=day,n=26,s=ema)&c(t=day,n=09,s=ema)<c(t=day,n=026,s=ema)"}
+N: cross side is wrong
+Q: big cap with large percent of trading from institutional investors
+A: {"Date":"today", "Expr": "marketcap(t=daily)>8200&qlmt(t=daily,n=0)/qlmt(t=daily,n=0,s=sum)>0.5"}
+N: made up column name
 """
 
 

@@ -2,14 +2,9 @@ import json
 import subprocess
 import zmq
 from ai1.NLToJson import NLToJson
+from ai1.Explore import ExploreDict
 
 #
-PreQCache = {
-    "volume increase 10 folds today vs previous 5 days":
-    '{"Date":"today", "Expr": "qlmt(t=day)/qlmt(t=day,n=5,s=mean)>10"}',
-    "random question":
-    "I'm sorry, I didn't understand your question. Please provide a valid question related to the format of the JSON output."
-}
 ExploreID = 0
 QCache = {}  # Initialize cache for queries
 
@@ -68,16 +63,16 @@ def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
         info = ""
         if q == 'explore':
             global ExploreID
-            q = list(PreQCache.keys())[ExploreID]
-            ExploreID = (ExploreID + 1) % len(PreQCache)
+            q = list(ExploreDict.keys())[ExploreID]
+            ExploreID = (ExploreID + 1) % len(ExploreDict)
             info += f"Exploring: {q}\n"
         else:
             info += f"Checking: {q}\n"
         skt_log.send_json({'q': q})
 
         # Check if q exists in cache, otherwise convert q to JSON
-        if q in PreQCache:
-            js_str = PreQCache[q]
+        if q in ExploreDict:
+            js_str = ExploreDict[q]
         elif q in QCache:
             js_str = QCache[q]
         else:
