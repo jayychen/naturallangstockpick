@@ -83,6 +83,19 @@ body {
 /* text-align: center; */
 /* } */
 
+#responseTable {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#responseTable th {
+  text-align: center;
+}
+
+#responseTable th:first-child {
+  width: 30%;
+}
+
 #responseTable tbody td {
   padding: 0.75rem;
   vertical-align: center;

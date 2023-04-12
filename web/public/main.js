@@ -37,6 +37,16 @@ socket.on('response', (response) => {
   if (response.result === 'error') {
     errorContainer.innerHTML = `<div class="alert alert-danger">` + response.err_msg + `</div>`;
   } else {
+    //table header 
+    const tableHeader = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headerRow.innerHTML = `
+    <th> </th>
+    <th>Ticker</th>
+    `;
+    tableHeader.appendChild(headerRow);
+    responseTable.appendChild(tableHeader);
+    //
     const tableBody = document.createElement('tbody');
     response.symbols.forEach((item, index) => {
       const tableRow = document.createElement('tr');
