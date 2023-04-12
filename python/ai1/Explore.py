@@ -11,6 +11,11 @@ ExploreVec.append({
 })
 
 ExploreVec.append({
+    "Q": "just as an experiment, now define maq as minimal of 1. log of market cap to the power of 2, 2. fourth root of volume. I want stock with maq larger than 30",
+    "A": '{"Date":"today", "Expr": "min(log10(marketcap(t=daily))^2, qlmt(t=day,n=0)^(1/4))>30"}'
+})
+
+ExploreVec.append({
     "Q": "small cap with 5 fold increase in volume vs 20 day average",
     "A": '{"Date":"today", "Expr": "marketcap(t=daily)<100&qlmt(t=day,n=0)/qlmt(t=day,n=20)>5"}'
 })
@@ -23,11 +28,6 @@ ExploreVec.append({
 ExploreVec.append({
     "Q": "I maintain the database and has added column idx under table meme, where 1 is for meme stocks. list small cap meme stocks",
     "A": '{"Date":"today", "Expr": "marketcap(t=daily)<100&idx(t=meme,n=0)=1"}'
-})
-
-ExploreVec.append({
-    "Q": "big cap with large percent of trading from institutions",
-    "A": 'I\'m sorry, I cannot provide an answer as the requested table/column "institutional trading" is not in the database and not supported by the translator.'
 })
 
 ExploreVec.append({
