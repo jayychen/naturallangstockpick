@@ -2,7 +2,7 @@ import json
 import subprocess
 import zmq
 from ai1.NLToJson import NLToJson
-from ai1.Explore import ExploreDict
+from ai1.Explore import ExploreVec, ExploreDict
 
 #
 ExploreID = 0
@@ -63,8 +63,8 @@ def NLToSymWorker(addr_rep, addr_log, multi_worker=False):
         info = ""
         if q == 'explore':
             global ExploreID
-            q = list(ExploreDict.keys())[ExploreID]
-            ExploreID = (ExploreID + 1) % len(ExploreDict)
+            q = ExploreVec[ExploreID]["Q"]
+            ExploreID = (ExploreID + 1) % len(ExploreVec)
             info += f"Exploring: {q}\n"
         else:
             info += f"Checking: {q}\n"
