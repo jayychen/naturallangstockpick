@@ -3,7 +3,8 @@
 Disclaimer: This is just a fun project to learn about the stock market and natural language processing. Do not rely on this for any financial decisions.
 
 ## Introduction
-Sometimes it is not easy to find tickers that meet specific criteria. For example, one might want to find all small-cap stocks that have an unusually high trading volume today and a maximum drawdown of the close price of less than 10% in the last 20 days. This project aims to make this process easier by providing a natural language interface, allowing users to get the list of tickers by simply asking the question. Check out this [website](https://www.stockchatai.com){:target="_blank" rel="noopener noreferrer"} and keep clicking on the "Explore" button to see some examples.
+Sometimes it is not easy to find tickers that meet specific criteria. For example, one might want to find all small-cap stocks that have an unusually high trading volume today and a maximum drawdown of the close price of less than 10% in the last 20 days. This project aims to make this process easier by providing a natural language interface, allowing users to get the list of tickers by simply asking the question. Check out this 
+<a href="https://www.stockchatai.com" target="_blank">website</a> and keep clicking on the "Explore" button to see some examples.
 
 ## QExpr: An Intermediary Language
 QExpr is an intermediary language between natural language and SQL queries. It is composed of tokens and common math operations of tokens are supported. eg.
