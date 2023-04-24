@@ -55,6 +55,16 @@ body {
   cursor: pointer;
 }
 
+.disclaimer-icon {
+  font-size: 1.2rem;
+  margin-right: 5px;
+  /* color: #666; */
+}
+.disclaimer-icon:hover {
+  /* background-color: #ccc; */
+  cursor: pointer;
+}
+
 #questionInput {
   border-radius: 24px;
   padding: 12px 24px;
