@@ -55,13 +55,11 @@ body {
   cursor: pointer;
 }
 
-.disclaimer-icon {
+#disclaimer {
   font-size: 1.2rem;
   margin-right: 5px;
-  /* color: #666; */
 }
-.disclaimer-icon:hover {
-  /* background-color: #ccc; */
+#disclaimer:hover {
   cursor: pointer;
 }
 
