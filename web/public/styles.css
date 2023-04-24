@@ -57,10 +57,12 @@ body {
 
 #disclaimer {
   font-size: 1.2rem;
-  margin-right: 5px;
+  padding: 5px;
+  color: #777;
 }
 #disclaimer:hover {
   cursor: pointer;
+  color: black;
 }
 
 #questionInput {
