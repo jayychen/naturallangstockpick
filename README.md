@@ -35,7 +35,7 @@ would be:
 <p align="center">
 marketcap(t=daily)<100&<br>
 qlmt(t=day,n=0)>qlmt(t=day,n=20,s=mean)*10&<br>
-c(t=day,n=20,s=mdd)<-0.1
+c(t=day,n=20,s=mdd)>-0.1
 </p>
 where the first line selects stocks with a market cap larger than 100 million, the second line selects stocks with a trading volume larger than 10 times the average trading volume in the last 20 days, and the third line selects stocks with a maximum drawdown of the close price less than 10% in the last 20 days.
 
