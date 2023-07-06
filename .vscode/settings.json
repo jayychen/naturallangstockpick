@@ -1,40 +1,26 @@
 {
   //file list------------------------------
   "files.watcherExclude": {
-    //R 
-    "**/man/": true,
-    "**/RcppExports.*": true,
-    "**/.Rhistory": true,
-    "**/.Rbuildignore": true,
-    "**/.Rproj.user": true,
     //python
     "**/__pycache__": true,
+    ".conda/": true,
     //git
     "**/.git": true,
     //c++
     "**/build": true,
-    //mac
-    "**.DS_Store": true,
     //project
-    "**/temp": true
+    // "**/conf": true,
   },
   "files.exclude": {
-    //R 
-    "**/man/": true,
-    "**/RcppExports.*": true,
-    "**/.Rhistory": true,
-    "**/.Rbuildignore": true,
-    "**/.Rproj.user": true,
-    //python
+    //python 
     "**/__pycache__": true,
+    ".conda/": true,
     //git
     "**/.git": true,
     //c++
     "**/build": true,
-    //mac
-    "**.DS_Store": true,
     //project
-    "**/temp": true
+    // "**/conf": true,
   },
   // formatter------------------------------
   "editor.formatOnSave": true,
@@ -51,8 +37,5 @@
   // cpp ------------------------------
   "C_Cpp.autoAddFileAssociations": false,
   // python-----------------------------
-  "python.pythonPath": "/usr/bin/python3.8",
-  "python.analysis.extraPaths": [
-    "./python"
-  ],
+  "python.terminal.activateEnvironment": false,
 }
